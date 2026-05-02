@@ -1,0 +1,337 @@
+:root {
+  --primary-color: #26c6da;
+  --text-color: #ffffff;
+  --background-color: #f7f7f7;
+  --grid-color: #e0e0e0;
+  --arrow-color: #333333;
+  --dot-color: #888888; /* Color de los puntos que recorren las líneas */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* El Contenedor de la Cámara */
+.camera-view {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 1500px; /* Crea profundidad para efectos de paralaje si se desea */
+}
+
+/* Contenedor del Grafo Completo (para aplicar zoom y paneo global) */
+.graph-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: camera-movement 20s infinite ease-in-out;
+  width: 800px;
+  height: 800px;
+}
+
+/* Animación de la Cámara (Zoom y Paneo) */
+@keyframes camera-movement {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  15% {
+    transform: translate(-55%, -45%) scale(1.1) rotate(1deg); /* Ligero zoom in y giro */
+  }
+  30% {
+    transform: translate(-45%, -55%) scale(0.9) rotate(-1deg); /* Ligero zoom out y giro */
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(0deg); /* Zoom profundo */
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.1) rotate(2deg); /* Un pequeño giro */
+  }
+  85% {
+    transform: translate(-52%, -48%) scale(1.05) rotate(0.5deg); /* Reajuste */
+  }
+}
+
+/* El Grid Dinámico y Vivo */
+.dynamic-grid {
+  position: absolute;
+  width: 200%; /* Más grande para el paneo */
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.1;
+  z-index: -2;
+  transform: translateZ(-200px); /* Paralaje */
+  animation: grid-pulse 15s infinite ease-in-out;
+}
+
+@keyframes grid-pulse {
+  0%, 100% {
+    opacity: 0.1;
+    transform: translateZ(-200px) scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: translateZ(-190px) scale(1.02);
+  }
+}
+
+/* Una segunda capa de grid para más profundidad */
+.grid-overlay {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image:
+    radial-gradient(var(--grid-color) 1.5px, transparent 1px);
+  background-size: 25px 25px;
+  opacity: 0.05;
+  z-index: -1;
+  transform: translateZ(-100px); /* Paralaje intermedio */
+  animation: grid-overlay-pulse 20s infinite linear;
+}
+
+@keyframes grid-overlay-pulse {
+  0% { transform: translateZ(-100px) scale(1) rotate(0deg); }
+  100% { transform: translateZ(-100px) scale(1.05) rotate(1deg); }
+}
+
+
+/* Estilo General de los Nodos */
+.node {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+  transform-origin: center;
+  animation: node-float 6s infinite ease-in-out;
+}
+
+@keyframes node-float {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-10px); }
+}
+
+.node-label {
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Posicionamiento Exacto de los Nodos */
+#node-0 { top: 100px; left: 400px; animation-delay: 0s; }
+#node-1 { top: 200px; left: 560px; animation-delay: 0.8s; }
+#node-2 { top: 380px; left: 590px; animation-delay: 1.6s; }
+#node-3 { top: 560px; left: 480px; animation-delay: 2.4s; }
+#node-4 { top: 560px; left: 320px; animation-delay: 3.2s; }
+#node-5 { top: 380px; left: 210px; animation-delay: 4.0s; }
+#node-6 { top: 200px; left: 240px; animation-delay: 4.8s; }
+
+/* Contenedor de Líneas y Flechas (para que se queden detrás de los nodos) */
+.edge-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+}
+
+/* Estilo general de las líneas (bordes curvos) */
+.edge {
+  position: absolute;
+  pointer-events: none;
+  transform-origin: 0 0;
+  overflow: visible; /* Asegura que las flechas y puntos sean visibles */
+}
+
+/* Puntos animados recorriendo las líneas */
+.edge-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: var(--dot-color);
+  border-radius: 50%;
+  offset-rotate: auto;
+  opacity: 0;
+  animation: travel-dot 3s infinite linear;
+}
+
+/* El Punto del Loop (Nodo 0) es especial */
+.edge-dot.loop {
+  animation: travel-dot-loop 2s infinite linear;
+  width: 5px;
+  height: 5px;
+}
+
+/* Definición de la animación para puntos normales */
+@keyframes travel-dot {
+  0% { offset-distance: 0%; opacity: 0; }
+  5%, 95% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Definición para el punto del loop */
+@keyframes travel-dot-loop {
+  0% { offset-distance: 0%; opacity: 0; }
+  5%, 95% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Estilo de la Flecha estática (para marcar la dirección) */
+.arrowhead {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid var(--arrow-color);
+  transform-origin: center bottom;
+  z-index: 6;
+}
+
+/* == Posicionamiento y Curvado de Líneas (coincidente con la imagen) == */
+
+/* Loop del Nodo 0 */
+#loop-0 {
+  top: 75px; left: 375px;
+  width: 50px; height: 50px;
+  border: 2px solid var(--arrow-color);
+  border-radius: 50%;
+  border-left-color: transparent; /* Romper el círculo para simular la flecha */
+}
+#loop-0 .edge-dot {
+  offset-path: path("M 25 0 C 40 0, 50 10, 50 25 C 50 40, 40 50, 25 50 C 10 50, 0 40, 0 25"); /* Trayectoria circular aproximada */
+}
+/* Cabeza de flecha del loop (con animación de parpadeo) */
+#loop-0::after {
+  content: '';
+  position: absolute;
+  top: 45px; left: 10px;
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 10px solid var(--arrow-color); /* Apuntando hacia abajo */
+  animation: arrow-head-pulse 2s infinite alternate ease-in-out;
+}
+
+/* Cruces Principales */
+/* Nodo 6 -> 3 */
+#edge-6-3 {
+  top: 230px; left: 270px;
+  width: 250px; height: 350px;
+}
+#edge-6-3 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
+#edge-6-3 .edge-dot {
+  offset-path: path("M 0 0 C 100 50, 150 200, 210 330");
+}
+#head-6-3 { top: 560px; left: 480px; transform: rotate(-100deg); } /* Ajuste de rotación para la punta */
+
+/* Nodo 1 -> 4 */
+#edge-1-4 {
+  top: 230px; left: 530px;
+  width: 250px; height: 350px;
+}
+#edge-1-4 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
+#edge-1-4 .edge-dot {
+  offset-path: path("M 0 0 C -100 50, -150 200, -210 330");
+}
+#head-1-4 { top: 560px; left: 320px; transform: rotate(100deg); }
+
+/* Cruces Horizontales */
+/* Nodo 5 -> 2 */
+#edge-5-2 {
+  top: 410px; left: 240px;
+  width: 350px; height: 100px;
+}
+#edge-5-2 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
+#edge-5-2 .edge-dot {
+  offset-path: path("M 0 0 C 100 100, 250 100, 350 0");
+}
+#head-5-2 { top: 410px; left: 590px; transform: rotate(-90deg); }
+
+/* Arcos Laterales */
+/* Nodo 5 -> 4 */
+#edge-5-4 {
+  top: 410px; left: 240px;
+  width: 80px; height: 180px;
+}
+#edge-5-4 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
+#edge-5-4 .edge-dot {
+  offset-path: path("M 0 0 C -20 100, 50 150, 80 150");
+}
+#head-5-4 { top: 560px; left: 320px; transform: rotate(-60deg); }
+
+/* Nodo 2 -> 3 */
+#edge-2-3 {
+  top: 410px; left: 590px;
+  width: 80px; height: 180px;
+  transform: scaleX(-1); /* Invertir para el lado derecho */
+}
+#edge-2-3 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
+#edge-2-3 .edge-dot {
+  offset-path: path("M 0 0 C -20 100, 50 150, 80 150");
+}
+#head-2-3 { top: 560px; left: 480px; transform: rotate(60deg); }
+
+/* Animación de la cabeza de flecha para que no sea estática */
+@keyframes arrow-head-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.arrowhead {
+  animation: arrow-head-pulse 1.5s infinite alternate ease-in-out;
+}
+
+/* Delays de animación para los puntos */
+#dot-6-3 { animation-delay: 0s; }
+#dot-1-4 { animation-delay: 1.5s; }
+#dot-5-2 { animation-delay: 3s; }
+#dot-5-4 { animation-delay: 4.5s; }
+#dot-2-3 { animation-delay: 6s; }
+#dot-loop-0 { animation-delay: 0.5s; }
+
+/* Botón de navegación */
+.nav-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid #00d9ff;
+  color: #00d9ff;
+  border-radius: 25px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  z-index: 100;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.nav-btn:hover {
+  background: #00d9ff;
+  color: #0f172a;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+}

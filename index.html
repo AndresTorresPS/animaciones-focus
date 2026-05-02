@@ -1,179 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualización de Grafos</title>
-
-<style>
-:root {
-    --bg-color: #0a0a12;
-    --node-color: #64ffda;
-    --text-color: #ffffff;
-}
-
-body {
-    margin: 0;
-    overflow: hidden;
-    background: radial-gradient(circle at center, #0f172a, #020617);
-    font-family: 'Segoe UI', sans-serif;
-}
-
-canvas {
-    display: block;
-}
-
-.overlay {
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 80%;
-    pointer-events: none;
-}
-
-h1 {
-    color: var(--text-color);
-    font-size: 1.6rem;
-    font-weight: 300;
-    letter-spacing: 1.5px;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out forwards;
-}
-
-.highlight {
-    color: var(--node-color);
-    font-weight: 600;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animaciones Focus - Grafos</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-
 <body>
+    <div class="home-container">
+        <canvas id="bg-canvas" class="particles-bg"></canvas>
+        
+        <div class="home-content">
+            <h1>Visualización de Grafos</h1>
+            <p>Explora la belleza de las estructuras de datos a través de animaciones interactivas. Cada nodo representa una conexión en el universo digital.</p>
+            <a href="pages/grafo-1.html" class="btn">
+                <span>Ver primer grafo</span>
+            </a>
+        </div>
+    </div>
 
-<canvas id="canvas"></canvas>
-
-<div class="overlay">
-    <h1>
-        Un <span class="highlight">nodo</span> es la unidad básica de un grafo,<br>
-        permitiendo modelar <span class="highlight">relaciones complejas</span> entre entidades.
-    </h1>
-</div>
-
-<script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-let particles = [];
-const PARTICLE_COUNT = 90;
-const MAX_DIST = 150;
-const MAX_DIST_SQ = MAX_DIST * MAX_DIST;
-
-const mouse = { x: null, y: null };
-
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
-
-window.addEventListener("mousemove", e => {
-    mouse.x = e.x;
-    mouse.y = e.y;
-});
-
-class Particle {
-    constructor() {
-        this.reset();
-    }
-
-    reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.6;
-        this.vy = (Math.random() - 0.5) * 0.6;
-        this.size = Math.random() * 2 + 1;
-    }
-
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // rebote
-        if (this.x <= 0 || this.x >= canvas.width) this.vx *= -1;
-        if (this.y <= 0 || this.y >= canvas.height) this.vy *= -1;
-
-        // interacción suave con mouse
-        if (mouse.x !== null) {
-            const dx = this.x - mouse.x;
-            const dy = this.y - mouse.y;
-            const distSq = dx * dx + dy * dy;
-
-            if (distSq < MAX_DIST_SQ) {
-                const force = (MAX_DIST_SQ - distSq) / MAX_DIST_SQ;
-                this.x += dx * force * 0.02;
-                this.y += dy * force * 0.02;
-            }
-        }
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(100,255,218,0.9)";
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-function init() {
-    particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
-}
-
-function connect() {
-    for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const distSq = dx * dx + dy * dy;
-
-            if (distSq < MAX_DIST_SQ) {
-                const opacity = 1 - distSq / MAX_DIST_SQ;
-
-                ctx.strokeStyle = `rgba(100,255,218,${opacity * 0.4})`;
-                ctx.lineWidth = 1;
-
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-            }
-        }
-    }
-}
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p => {
-        p.update();
-        p.draw();
-    });
-
-    connect();
-
-    requestAnimationFrame(animate);
-}
-
-init();
-animate();
-</script>
-
+    <script src="assets/js/graph.js"></script>
+    <script>
+        // Inicializar el grafo de fondo con menos partículas
+        const bgGraph = new ParticleGraph('bg-canvas', 60);
+    </script>
 </body>
 </html>
