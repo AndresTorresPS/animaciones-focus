@@ -165,6 +165,19 @@ body {
   overflow: visible; /* Asegura que las flechas y puntos sean visibles */
 }
 
+.edge svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.edge path {
+  stroke: var(--arrow-color);
+  stroke-width: 4;
+  fill: none;
+}
+
 /* Puntos animados recorriendo las líneas */
 .edge-dot {
   position: absolute;
@@ -216,7 +229,7 @@ body {
 #loop-0 {
   top: 75px; left: 375px;
   width: 50px; height: 50px;
-  border: 2px solid var(--arrow-color);
+  border: 4px solid var(--arrow-color);
   border-radius: 50%;
   border-left-color: transparent; /* Romper el círculo para simular la flecha */
 }
@@ -237,62 +250,29 @@ body {
 
 /* Cruces Principales */
 /* Nodo 6 -> 3 */
-#edge-6-3 {
-  top: 230px; left: 270px;
-  width: 250px; height: 350px;
-}
-#edge-6-3 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
 #edge-6-3 .edge-dot {
   offset-path: path("M 0 0 C 100 50, 150 200, 210 330");
 }
-#head-6-3 { top: 560px; left: 480px; transform: rotate(-100deg); } /* Ajuste de rotación para la punta */
 
 /* Nodo 1 -> 4 */
-#edge-1-4 {
-  top: 230px; left: 530px;
-  width: 250px; height: 350px;
-}
-#edge-1-4 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
 #edge-1-4 .edge-dot {
   offset-path: path("M 0 0 C -100 50, -150 200, -210 330");
 }
-#head-1-4 { top: 560px; left: 320px; transform: rotate(100deg); }
 
-/* Cruces Horizontales */
 /* Nodo 5 -> 2 */
-#edge-5-2 {
-  top: 410px; left: 240px;
-  width: 350px; height: 100px;
-}
-#edge-5-2 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
 #edge-5-2 .edge-dot {
   offset-path: path("M 0 0 C 100 100, 250 100, 350 0");
 }
-#head-5-2 { top: 410px; left: 590px; transform: rotate(-90deg); }
 
-/* Arcos Laterales */
 /* Nodo 5 -> 4 */
-#edge-5-4 {
-  top: 410px; left: 240px;
-  width: 80px; height: 180px;
-}
-#edge-5-4 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
 #edge-5-4 .edge-dot {
   offset-path: path("M 0 0 C -20 100, 50 150, 80 150");
 }
-#head-5-4 { top: 560px; left: 320px; transform: rotate(-60deg); }
 
 /* Nodo 2 -> 3 */
-#edge-2-3 {
-  top: 410px; left: 590px;
-  width: 80px; height: 180px;
-  transform: scaleX(-1); /* Invertir para el lado derecho */
-}
-#edge-2-3 path { stroke: var(--arrow-color); stroke-width: 2; fill: none; }
 #edge-2-3 .edge-dot {
   offset-path: path("M 0 0 C -20 100, 50 150, 80 150");
 }
-#head-2-3 { top: 560px; left: 480px; transform: rotate(60deg); }
 
 /* Animación de la cabeza de flecha para que no sea estática */
 @keyframes arrow-head-pulse {

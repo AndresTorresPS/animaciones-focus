@@ -10,7 +10,7 @@ Una página web moderna para visualizar grafos interactivos con animaciones fasc
 animaciones-focus/
 ├── index.html                 # Página de inicio con botón de navegación
 ├── pages/
-│   └── grafo-1.html          # Primera visualización de grafo
+│   └── graph-1.html          # Primera visualización de grafo
 ├── assets/
 │   ├── css/
 │   │   └── styles.css        # Estilos compartidos (responsive, animaciones)
@@ -83,7 +83,7 @@ Copia este template en `pages/grafo-2.html`:
 Edita `index.html` y agrega más botones en `.home-content`:
 
 ```html
-<a href="pages/grafo-1.html" class="btn">
+<a href="pages/graph-1.html" class="btn">
     <span>Ver primer grafo</span>
 </a>
 <a href="pages/grafo-2.html" class="btn">
