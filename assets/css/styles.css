@@ -109,6 +109,28 @@ body {
     z-index: 1;
 }
 
+.button-group {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-secondary {
+    border-color: #9c27b0;
+    color: #9c27b0;
+    box-shadow: 0 0 20px rgba(156, 39, 176, 0.3);
+}
+
+.btn-secondary::before {
+    background: rgba(156, 39, 176, 0.2);
+}
+
+.btn-secondary:hover {
+    background: #9c27b0;
+    box-shadow: 0 0 40px rgba(156, 39, 176, 0.6);
+}
+
 /* Fondo animado de partículas */
 .particles-bg {
     position: absolute;
